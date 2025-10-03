@@ -205,18 +205,23 @@ function showStep(n){
 }
 stepPills.forEach(p=>p.addEventListener('click', ()=>showStep(+p.dataset.step)));
 document.getElementById('prevBtn').addEventListener('click', ()=>showStep(curStep-1));
-document.getElementById('nextBtn').addEventListener('click', ()=>{
-  if(curStep < 5) showStep(curStep+1);
 });
 
 const nextBtn = document.getElementById('nextBtn');
 
 nextBtn.addEventListener('click', async () => {
+  if(curStep === 2){
+    const bgFile = state.bgFileInput.files[0];
+    const pfFile = state.pfFileInput.files[0];
+    if(!bgFile && !state.bgURLInput.value && !pfFile && !state.pfURLInput.value){
+      alert('Please select at least one image or provide a URL.');
+      return;
+    }
+  }
+
   if (curStep < 5) {
-    // Move to next step normally
     showStep(curStep + 1);
   } else {
-    // Last step (Finish) → generate and download
     try {
       const html = await generateStandalone();
       const blob = new Blob([html], { type: 'text/html' });
