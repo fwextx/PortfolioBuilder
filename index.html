@@ -8,7 +8,7 @@
   :root{
     --bg:#0b1220; --card:#0f1724; --muted:#93a3b8; --accent:#06b6d4;
   }
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;overflow: hidden;}
   body{background:linear-gradient(180deg,#071025 0%, #07121b 100%); color:#e6eef6; display:flex; align-items:flex-start; justify-content:center; padding:28px;}
   .wrap{width:1100px; max-width:calc(100% - 40px); display:grid; grid-template-columns: 1fr 420px; gap:20px;}
   header{grid-column:1/-1; margin-bottom:8px; display:flex;align-items:center;justify-content:space-between}
@@ -150,13 +150,6 @@
   </div>
 
 <script>
-/*
-  Portfolio Builder
-  - Live preview uses object URLs for uploaded files
-  - Download embeds uploaded images as base64 (via FileReader) to create standalone index.html
-*/
-
-/* ---------- state & helpers ---------- */
 const state = {
   name: document.getElementById('name').value,
   headline: document.getElementById('headline').value,
@@ -336,6 +329,7 @@ function buildStandaloneHTML(settings){
   html,body{
     height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
     background:#000;color:#fff;
+    overflow: hidden;
   }
   body{
     background-image:url('${settings.bgSrc || ''}');
