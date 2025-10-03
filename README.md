@@ -2,7 +2,7 @@
 
 An easy to use, interactive website to create a standalone portfolio page in seconds — no coding required! Build, preview, and download your portfolio as a single HTML file that works anywhere.  
 
-![Portfolio Builder](assets2/PortfolioBuilder.png)
+<img src="assets2/GeneratedPortfolio.png" alt="Example Portfolio Output" width="400" height="auto"/>
 
 ## Features
 
@@ -14,7 +14,7 @@ An easy to use, interactive website to create a standalone portfolio page in sec
 - **Responsive Layout:** Looks great on desktop and mobile.  
 - **Easy Download & Sharing:** Generate your portfolio with a click and share it anywhere.  
 
-![Example Portfolio Output](assets2/GeneratedPortfolio.png)  
+<img src="assets2/PortfolioBuilder.png" alt="Portfolio Builder" width="400" height="auto"/>
 
 ---
 
