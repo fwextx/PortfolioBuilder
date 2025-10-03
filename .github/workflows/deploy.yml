@@ -13,14 +13,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Prepare deployment folder
-        run: |
-          mkdir deploy
-          cp index.html deploy/
-
-      - name: Deploy to GitHub Pages
+      - name: Deploy index.html to gh-pages
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./deploy
+          publish_dir: ./
           publish_branch: gh-pages
+          keep_files: false
