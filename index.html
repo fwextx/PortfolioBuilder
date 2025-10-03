@@ -210,18 +210,10 @@ document.getElementById('prevBtn').addEventListener('click', ()=>showStep(curSte
 const nextBtn = document.getElementById('nextBtn');
 
 nextBtn.addEventListener('click', async () => {
-  if(curStep === 2){
-    const bgFile = state.bgFileInput.files[0];
-    const pfFile = state.pfFileInput.files[0];
-    if(!bgFile && !state.bgURLInput.value && !pfFile && !state.pfURLInput.value){
-      alert('Please select at least one image or provide a URL.');
-      return;
-    }
-  }
-
   if (curStep < 5) {
-    showStep(curStep + 1);
+    showStep(curStep + 1); // advance to next step
   } else {
+    
     try {
       const html = await generateStandalone();
       const blob = new Blob([html], { type: 'text/html' });
@@ -238,7 +230,6 @@ nextBtn.addEventListener('click', async () => {
     }
   }
 });
-
 
 /* ---------- inputs & dynamic UI ---------- */
 const bgBlurSlider = document.getElementById('bgBlur');
