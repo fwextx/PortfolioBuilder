@@ -205,7 +205,6 @@ function showStep(n){
 }
 stepPills.forEach(p=>p.addEventListener('click', ()=>showStep(+p.dataset.step)));
 document.getElementById('prevBtn').addEventListener('click', ()=>showStep(curStep-1));
-});
 
 const nextBtn = document.getElementById('nextBtn');
 
