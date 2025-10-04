@@ -6,8 +6,7 @@
 <title>Portfolio Builder</title>
 <script>
   fetch('https://portfoliobuilder-analytics.fwextx.workers.dev/')
-    .then(res => res.json())
-    .then(data => console.log('Analytics logged:', data));
+    .catch(err => console.error(err));
 </script>
 
 <style>
