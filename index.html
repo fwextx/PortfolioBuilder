@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Portfolio Builder</title>
 <script>
-  fetch("https://portfoliobuilder-analytics.fwextx.workers.dev/")
-    .catch(err => console.error("Analytics ping failed:", err));
+  fetch('https://portfoliobuilder-analytics.fwextx.workers.dev/')
+    .then(res => res.json())
+    .then(data => console.log('Analytics logged:', data));
 </script>
 
 <style>
