@@ -4,6 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Portfolio Builder</title>
+<script>
+  fetch("https://portfoliobuilder-analytics.fwextx.workers.dev/")
+    .catch(err => console.error("Analytics ping failed:", err));
+</script>
+
 <style>
   :root{
     --bg:#0b1220; --card:#0f1724; --muted:#93a3b8; --accent:#06b6d4;
