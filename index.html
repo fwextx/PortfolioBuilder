@@ -1,0 +1,549 @@
+<!doctype html> 
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Portfolio Builder</title>
+<style>
+  :root{
+    --bg:#0b1220; --card:#0f1724; --muted:#93a3b8; --accent:#06b6d4;
+  }
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;overflow: hidden;}
+  body{background:linear-gradient(180deg,#071025 0%, #07121b 100%); color:#e6eef6; display:flex; align-items:flex-start; justify-content:center; padding:28px;}
+  .wrap{width:1100px; max-width:calc(100% - 40px); display:grid; grid-template-columns: 1fr 420px; gap:20px;}
+  header{grid-column:1/-1; margin-bottom:8px; display:flex;align-items:center;justify-content:space-between}
+  h1{font-size:20px;margin:0}
+  .builder{
+    background-color: #0f1724;
+    border:1px solid rgba(255,255,255,0.03);
+    padding:18px;border-radius:12px;box-shadow: 0 6px 30px rgba(2,6,23,0.6);
+  }
+  .steps{display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap}
+  .step-pill{padding:8px 10px; background:transparent; border-radius:8px; border:1px dashed rgba(255,255,255,0.03); font-size:13px; color:var(--muted)}
+  .step-pill.active{background:rgba(255,255,255,0.02); color:var(--accent); border-style:solid}
+  .form{display:flex; gap:14px}
+  .left{flex:1}
+  .step-content{display:none}
+  .step-content.active{display:block}
+  label{display:block; font-size:13px; color:var(--muted); margin-bottom:6px}
+  input[type="text"], input[type="url"], textarea, input[type="color"] {
+    width:100%; padding:10px; border-radius:8px; background:transparent; border:1px solid rgba(255,255,255,0.04); color:inherit;
+  }
+  textarea{min-height:110px; resize:vertical}
+  .row{display:flex; gap:10px}
+  .small{flex:1}
+  .controls{display:flex; gap:10px; margin-top:12px; align-items:center}
+  button{padding:10px 12px; border-radius:8px; border:0; cursor:pointer; background:var(--accent); color:#052021; font-weight:600}
+  button.ghost{background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); font-weight:600}
+  .preview-card{background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); overflow: hidden; border-radius:12px; padding:12px; height:720px; overflow:hidden; border:1px solid rgba(255,255,255,0.03)}
+  .preview-title{font-size:13px; color:var(--muted); margin-bottom:8px}
+  .skills-chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
+  .chip{background:rgba(255,255,255,0.03); padding:6px 8px; border-radius:999px; font-size:13px; color:#d7e9f5}
+  .small-muted{font-size:12px;color:var(--muted)}
+  .image-input-row{display:flex; gap:8px; align-items:center}
+  input[type=file]{color:var(--muted)}
+  .footer-note{font-size:12px;color:var(--muted); margin-top:10px}
+  /* small responsive */
+  @media (max-width:980px){ .wrap{grid-template-columns:1fr; } .preview-card{height:400px} }
+</style>
+</head>
+<body>
+  <video autoplay loop muted playsinline id="bgVideo" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+  <source src="assets/stars-2160.webm" type="video/webm">
+  Your browser does not support the video tag.
+</video>
+
+  <div class="wrap">
+    <header>
+      <h1>Portfolio Builder</h1>
+      <div class="small-muted"></div>
+    </header>
+
+    <div class="builder left">
+      <div class="steps">
+        <div class="step-pill active" data-step="1">1. Basic</div>
+        <div class="step-pill" data-step="2">2. Images</div>
+        <div class="step-pill" data-step="3">3. Skills & Links</div>
+        <div class="step-pill" data-step="4">4. Layout</div>
+        <div class="step-pill" data-step="5">5. Generate</div>
+      </div>
+
+      <div id="step-1" class="step-content active">
+        <label>Name</label>
+        <input id="name" type="text" placeholder="Your Name" value="" />
+        <label style="margin-top:8px">Headline / short tagline</label>
+        <input id="headline" type="text" placeholder="Frontend dev" value="" />
+        <label style="margin-top:8px">Bio (short)</label>
+        <textarea id="bio">A short bio describing you - what you're good at, what you like building, and contact info.</textarea>
+        <label style="margin-top:8px">Theme color</label>
+        <input id="themeColor" type="color" value="#06b6d4" />
+      </div>
+
+      <div id="step-2" class="step-content">
+        <label>Background image</label>
+        <div class="image-input-row">
+          <input id="bgFile" type="file" accept="image/*" />
+          <input id="bgURL" type="url" placeholder="or paste image URL here" />
+        </div>
+        <label style="margin-top:10px">Background blur (px)</label>
+        <input id="bgBlur" type="range" min="0" max="40" value="6" />
+        <div class="small-muted" id="bgBlurValue">6px</div>
+
+        <hr style="opacity:0.06;margin:12px 0" />
+        <label>Profile picture</label>
+        <div class="image-input-row">
+          <input id="pfFile" type="file" accept="image/*" />
+          <input id="pfURL" type="url" placeholder="or paste profile URL here" />
+        </div>
+      </div>
+
+      <div id="step-3" class="step-content">
+        <label>Skills — type then press Enter</label>
+        <input id="skillInput" type="text" placeholder="e.g. JavaScript" />
+        <div class="skills-chips" id="skillsWrap"></div>
+
+        <hr style="opacity:0.06;margin:12px 0" />
+        <label>Links & contact</label>
+        <div class="row">
+          <input id="github" class="small" type="url" placeholder="https://github.com/you" />
+          <input id="linkedin" class="small" type="url" placeholder="https://linkedin.com/in/you" />
+        </div>
+        <div class="row" style="margin-top:8px">
+          <input id="website" class="small" type="url" placeholder="Website (optional)" />
+          <input id="email" class="small" type="text" placeholder="Email (optional)" />
+        </div>
+      </div>
+
+      <div id="step-4" class="step-content">
+        <label>Layout</label>
+        <div style="display:flex; gap:10px; margin-top:6px">
+          <label><input type="radio" name="layout" value="center" checked /> Centered</label>
+          <label><input type="radio" name="layout" value="left" /> Left-aligned</label>
+        </div>
+
+        <label style="margin-top:12px">Extras</label>
+        <div style="display:flex; gap:8px; margin-top:6px">
+          <label><input id="showContact" type="checkbox" checked /> Show contact icons</label>
+        </div>
+      </div>
+
+      <div id="step-5" class="step-content">
+        <div class="small-muted">Preview below updates live. When you're happy: <strong>Generate → Download</strong>.</div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button id="downloadBtn">Generate & Download HTML</button>
+          <button id="openPreviewBtn" class="ghost">Open preview in new tab</button>
+          <button id="copyHtmlBtn" class="ghost">Copy HTML to clipboard</button>
+        </div>
+        <div class="footer-note">Note: if you uploaded images, the downloaded file embeds them (standalone). Large images → big file size. Prefer optimized JPEG/WEBP under ~300KB for faster loading.</div>
+      </div>
+
+      <div class="controls" style="margin-top:14px">
+        <button id="prevBtn" class="ghost">← Prev</button>
+        <button id="nextBtn">Next →</button>
+        <div style="flex:1"></div>
+        <div class="small-muted">Tip: Press next after you're done</div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="preview-title">Live Preview</div>
+      <div class="preview-card" id="previewCard" style="overflow: hidden;">
+        <!-- live preview iframe gets injected -->
+        <iframe id="previewFrame" style="width:100%;height:100%;border:0;background:transparent;overflow: hidden;" sandbox="allow-same-origin"scrolling="no"></iframe>
+      </div>
+    </aside>
+  </div>
+
+<script>
+const state = {
+  name: document.getElementById('name').value,
+  headline: document.getElementById('headline').value,
+  bio: document.getElementById('bio').value,
+  themeColor: document.getElementById('themeColor').value,
+  bgFileInput: document.getElementById('bgFile'),
+  bgURLInput: document.getElementById('bgURL'),
+  bgBlur: +document.getElementById('bgBlur').value,
+  pfFileInput: document.getElementById('pfFile'),
+  pfURLInput: document.getElementById('pfURL'),
+  skills: [],
+  links: { github:'', linkedin:'', website:'', email:'' },
+  layout: 'center',
+  showContact: document.getElementById('showContact').checked,
+};
+
+// preview object URLs (revoke when replaced)
+let lastObjectUrls = [];
+
+// utility: convert File -> dataURL (base64)
+function fileToDataURL(file){
+  return new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = ()=>res(r.result);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+// create object URL for preview
+function fileToObjectURL(file){
+  return URL.createObjectURL(file);
+}
+function revokeLastObjectUrls(){
+  lastObjectUrls.forEach(u=>URL.revokeObjectURL(u));
+  lastObjectUrls = [];
+}
+
+/* ---------- UI navigation ---------- */
+const stepPills = document.querySelectorAll('.step-pill');
+const stepContents = document.querySelectorAll('.step-content');
+let curStep = 1;
+function showStep(n){
+  curStep = Math.max(1, Math.min(5, n));
+  stepPills.forEach(p=>p.classList.toggle('active', +p.dataset.step===curStep));
+  stepContents.forEach(c=>c.classList.toggle('active', c.id === `step-${curStep}`));
+  document.getElementById('prevBtn').style.visibility = (curStep===1? 'hidden':'visible');
+  document.getElementById('nextBtn').textContent = (curStep===5? 'Finish':'Next →');
+}
+stepPills.forEach(p=>p.addEventListener('click', ()=>showStep(+p.dataset.step)));
+document.getElementById('prevBtn').addEventListener('click', ()=>showStep(curStep-1));
+
+const nextBtn = document.getElementById('nextBtn');
+
+nextBtn.addEventListener('click', async () => {
+  if (curStep < 5) {
+    showStep(curStep + 1); // advance to next step
+  } else {
+    
+    try {
+      const html = await generateStandalone();
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'index.html';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert('Error generating file: ' + err);
+    }
+  }
+});
+
+/* ---------- inputs & dynamic UI ---------- */
+const bgBlurSlider = document.getElementById('bgBlur');
+const bgBlurValue = document.getElementById('bgBlurValue');
+bgBlurSlider.addEventListener('input', e=>{
+  state.bgBlur = +e.target.value;
+  bgBlurValue.textContent = `${state.bgBlur}px`;
+  updatePreview();
+});
+
+['name','headline','bio','themeColor','github','linkedin','website','email'].forEach(id=>{
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('input', ()=>{
+    if(id in state) state[id] = el.value;
+    if(['github','linkedin','website','email'].includes(id)) state.links[id] = el.value;
+    if(id==='themeColor') state.themeColor = el.value;
+    updatePreview();
+  });
+});
+
+// profile/ bg file inputs -> update preview on change
+[state.bgFileInput, state.pfFileInput].forEach(inp=>{
+  inp && inp.addEventListener('change', ()=> updatePreview());
+});
+[state.bgURLInput, state.pfURLInput].forEach(inp=>{
+  inp && inp.addEventListener('input', ()=> updatePreview());
+});
+
+// layout radios
+document.querySelectorAll('input[name="layout"]').forEach(r=>{
+  r.addEventListener('change', ()=>{ state.layout = r.value; updatePreview();});
+});
+document.getElementById('showContact').addEventListener('change', e=>{ state.showContact = e.target.checked; updatePreview();});
+
+/* ---------- skills chips ---------- */
+const skillInput = document.getElementById('skillInput');
+const skillsWrap = document.getElementById('skillsWrap');
+skillInput.addEventListener('keydown', e=>{
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    const v = skillInput.value.trim();
+    if(v){
+      state.skills.push(v);
+      skillInput.value = '';
+      renderSkills();
+      updatePreview();
+    }
+  }
+});
+function renderSkills(){
+  skillsWrap.innerHTML = '';
+  state.skills.forEach((s, i)=>{
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.textContent = s;
+    chip.title = 'Click to remove';
+    chip.style.cursor = 'pointer';
+    chip.addEventListener('click', ()=>{ state.skills.splice(i,1); renderSkills(); updatePreview(); });
+    skillsWrap.appendChild(chip);
+  });
+}
+
+/* ---------- preview generation ---------- */
+function getPreviewImageSrcs(){
+  // prefer uploaded file -> temp object URL; else use URL input; else blank
+  revokeLastObjectUrls();
+  const urls = { bg:null, pf:null };
+  const bgFile = state.bgFileInput.files && state.bgFileInput.files[0];
+  if(bgFile) { urls.bg = fileToObjectURL(bgFile); lastObjectUrls.push(urls.bg); }
+  else if(state.bgURLInput.value) urls.bg = state.bgURLInput.value;
+
+  const pfFile = state.pfFileInput.files && state.pfFileInput.files[0];
+  if(pfFile) { urls.pf = fileToObjectURL(pfFile); lastObjectUrls.push(urls.pf); }
+  else if(state.pfURLInput.value) urls.pf = state.pfURLInput.value;
+
+  return urls;
+}
+
+function buildStandaloneHTML(settings){
+  const esc = s => (s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+  const skillsHtml = (settings.skills||[]).map(s=>`<span class="chip">${esc(s)}</span>`).join(' ');
+  const contactHtml = [];
+  if(settings.links.github) contactHtml.push(`<a href="${esc(settings.links.github)}" target="_blank">GitHub</a>`);
+  if(settings.links.linkedin) contactHtml.push(`<a href="${esc(settings.links.linkedin)}" target="_blank">LinkedIn</a>`);
+  if(settings.links.website) contactHtml.push(`<a href="${esc(settings.links.website)}" target="_blank">Website</a>`);
+  if(settings.links.email) contactHtml.push(`<a href="mailto:${esc(settings.links.email)}">Email</a>`);
+  const contactString = settings.showContact ? `<div class="contacts">${contactHtml.join(' · ')}</div>` : '';
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>${esc(settings.name)} — Portfolio</title>
+<style>
+  :root{ --accent:${settings.themeColor}; }
+  html,body{
+    height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    background:#000;color:#fff;
+    overflow: hidden;
+  }
+  body{
+    background-image:url('${settings.bgSrc || ''}');
+    background-size:cover;
+    background-position:center;
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;
+    padding:20px;
+  }
+  .glass-card{
+    background:rgba(15,15,20,0.4);
+    backdrop-filter:blur(${settings.bgBlur}px);
+    -webkit-backdrop-filter:blur(${settings.bgBlur}px);
+    border-radius:32px; /* clean rounded rectangle */
+    padding:50px;
+    max-width:650px;
+    width:100%;
+    box-shadow:0 8px 40px rgba(0,0,0,0.6);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform:translateY(0px); }
+    50% { transform:translateY(-12px); }
+  }
+  .profile{
+    width:150px;height:150px;border-radius:50%;object-fit:cover;
+    border:5px solid rgba(255,255,255,0.15);
+    margin-bottom:20px;
+  }
+  h1{margin:0;font-size:34px;}
+  .headline{color:rgba(255,255,255,0.85);margin:8px 0 16px;font-size:18px;}
+  .bio{color:#e0f2ff;font-size:15px;line-height:1.6;margin-bottom:20px;}
+  .skills{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:18px;}
+  .chip{background:rgba(255,255,255,0.12);padding:8px 14px;border-radius:999px;font-size:13px;}
+  .contacts{margin-top:10px;}
+  .contacts a{color:var(--accent);text-decoration:none;margin:0 8px;font-weight:600;}
+  footer{margin-top:20px;font-size:12px;color:rgba(255,255,255,0.5);}
+  @media(max-width:600px){
+    .glass-card{padding:28px;border-radius:20px;}
+    .profile{width:110px;height:110px;}
+    h1{font-size:26px;}
+  }
+</style>
+</head>
+<body>
+  <div class="glass-card">
+    <img class="profile" src="${settings.pfSrc || ''}" alt="Profile">
+    <h1>${esc(settings.name)}</h1>
+    <div class="headline">${esc(settings.headline)}</div>
+    <div class="bio">${esc(settings.bio)}</div>
+    <div class="skills">${skillsHtml}</div>
+    ${contactString}
+  </div>
+</body>
+</html>`;
+}
+
+
+function updatePreview(){
+  // gather live values
+  const p = {
+    name: document.getElementById('name').value,
+    headline: document.getElementById('headline').value,
+    bio: document.getElementById('bio').value,
+    themeColor: document.getElementById('themeColor').value,
+    bgBlur: +document.getElementById('bgBlur').value,
+    skills: state.skills,
+    links: {
+      github: document.getElementById('github').value,
+      linkedin: document.getElementById('linkedin').value,
+      website: document.getElementById('website').value,
+      email: document.getElementById('email').value
+    },
+    layout: state.layout,
+    showContact: document.getElementById('showContact').checked
+  };
+
+  // image srcs (object URLs for preview)
+  const urls = getPreviewImageSrcs();
+  p.bgSrc = urls.bg || '';
+  p.pfSrc = urls.pf || '';
+
+  // write to iframe via srcdoc
+  const html = buildStandaloneHTML(p);
+  const iframe = document.getElementById('previewFrame');
+  iframe.srcdoc = html;
+}
+
+/* ---------- generate & download (embeds uploaded files) ---------- */
+async function generateStandalone(){
+  // collect same settings but ensure uploaded files are embedded as data URLs
+  const s = {
+    name: document.getElementById('name').value,
+    headline: document.getElementById('headline').value,
+    bio: document.getElementById('bio').value,
+    themeColor: document.getElementById('themeColor').value,
+    bgBlur: +document.getElementById('bgBlur').value,
+    skills: state.skills.slice(),
+    links: {
+      github: document.getElementById('github').value,
+      linkedin: document.getElementById('linkedin').value,
+      website: document.getElementById('website').value,
+      email: document.getElementById('email').value
+    },
+    layout: state.layout,
+    showContact: document.getElementById('showContact').checked,
+    bgSrc: '',
+    pfSrc: ''
+  };
+
+  // embed or fallback to URL (if user chose URL)
+  const bgFile = state.bgFileInput.files && state.bgFileInput.files[0];
+  if(bgFile){
+    s.bgSrc = await fileToDataURL(bgFile);
+  } else if(state.bgURLInput.value){
+    s.bgSrc = state.bgURLInput.value;
+  } else s.bgSrc = '';
+
+  const pfFile = state.pfFileInput.files && state.pfFileInput.files[0];
+  if(pfFile){
+    s.pfSrc = await fileToDataURL(pfFile);
+  } else if(state.pfURLInput.value){
+    s.pfSrc = state.pfURLInput.value;
+  } else s.pfSrc = '';
+
+  const html = buildStandaloneHTML(s);
+  return html;
+}
+
+document.getElementById('downloadBtn').addEventListener('click', async () => {
+  try {
+    // Collect settings
+    const settings = {
+      name: document.getElementById('name').value,
+      headline: document.getElementById('headline').value,
+      bio: document.getElementById('bio').value,
+      themeColor: document.getElementById('themeColor').value,
+      bgBlur: +document.getElementById('bgBlur').value,
+      skills: state.skills.slice(),
+      links: {
+        github: document.getElementById('github').value,
+        linkedin: document.getElementById('linkedin').value,
+        website: document.getElementById('website').value,
+        email: document.getElementById('email').value
+      },
+      layout: state.layout,
+      showContact: document.getElementById('showContact').checked
+    };
+
+    // Helper to convert file to base64
+    async function fileToDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Embed images as base64 if uploaded, else fallback to URL input
+    const bgFile = state.bgFileInput.files[0];
+    settings.bgSrc = bgFile ? await fileToDataURL(bgFile) : state.bgURLInput.value || '';
+
+    const pfFile = state.pfFileInput.files[0];
+    settings.pfSrc = pfFile ? await fileToDataURL(pfFile) : state.pfURLInput.value || '';
+
+    // Build final HTML
+    const html = buildStandaloneHTML(settings);
+
+    // Trigger download
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'index.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+  } catch (err) {
+    alert('Error generating file: ' + err);
+  }
+});
+
+
+document.getElementById('openPreviewBtn').addEventListener('click', async ()=>{
+  const html = await generateStandalone();
+  // open data URL in new tab (may be big)
+  const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  // note: revoking may break load; browser will release eventually
+});
+
+document.getElementById('copyHtmlBtn').addEventListener('click', async ()=>{
+  const html = await generateStandalone();
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    await navigator.clipboard.writeText(html);
+    alert('HTML copied to clipboard — paste into a file (index.html).');
+  } else {
+    // fallback: open in new tab so user can copy
+    const w = window.open();
+    w.document.write('<pre style="white-space:pre-wrap;font-family:monospace">'+html.replaceAll('<','&lt;')+'</pre>');
+  }
+});
+
+/* ---------- init ---------- */
+renderSkills();
+updatePreview();
+</script>
+</body>
+</html>
+<!-- Made with Love by Extx -->
