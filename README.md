@@ -35,4 +35,4 @@ This project is licensed under the GNU GPL v3. See the LICENSE file for details.
 
 ## Credits
 - Images used for Portfolio Builder: [CrazyKitten3D](https://fwextx.itch.io/crazykitten3d)
-- Portfolio Background Video: Mixkit
+- Portfolio Builder Background Video: Mixkit
