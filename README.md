@@ -10,7 +10,7 @@ An easy to use, interactive website to create a standalone portfolio page in sec
 - **Standalone HTML:** Generate a fully functional, standalone webpage with embedded images (base64, no external files required).  
 - **Customizable Design:** Adjust theme colors, layout, and blur effects.  
 - **Profile & Background Images:** Upload or link images for background and profile photo.  
-- **Skills & Links:** Add skills with chips, and link GitHub, LinkedIn, website, or email.  
+- **Skills & Links:** Add skills with chips, and link websites like GitHub, LinkedIn, website, or email.  
 - **Responsive Layout:** Looks great on desktop and mobile.  
 - **Easy Download & Sharing:** Generate your portfolio with a click and share it anywhere.  
 
